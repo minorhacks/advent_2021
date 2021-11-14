@@ -1,0 +1,16 @@
+[package]
+authors = ["Scott Minor <minor@minorhacks.com>"]
+name = "advent_2021"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rfnd-hello-world = "1.0.1"
+
+[package.metadata.raze]
+workspace_path = "//third_party/cargo"
+package_aliases_dir = "third_party/cargo"
+targets = [
+    "x86_64-unknown-linux-gnu"
+]
+genmode = "Remote"

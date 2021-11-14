@@ -1,0 +1,27 @@
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+load("@crates//:defs.bzl", "crate")
+
+# To add third-party dependencies:
+# 1. Add dependency to Cargo.toml
+# 2. Add dep for crate using `crate()` function
+
+rust_library(
+    name = "advent_2021",
+    srcs = glob(["*.rs"]),
+    deps = [
+        crate("rfnd-hello-world"),
+    ],
+)
+
+BINARIES = [
+    "hello_world",
+]
+
+[
+    rust_binary(
+        name = b,
+        srcs = ["bin/{}/main.rs".format(b)],
+        deps = [":advent_2021"],
+    )
+    for b in BINARIES
+]
