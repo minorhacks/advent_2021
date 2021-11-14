@@ -1,4 +1,4 @@
-load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library")
+load("@rules_rust//rust:defs.bzl", "rust_binary", "rust_library", "rust_test")
 load("@crates//:defs.bzl", "crate")
 
 # To add third-party dependencies:
@@ -11,6 +11,11 @@ rust_library(
     deps = [
         crate("rfnd-hello-world"),
     ],
+)
+
+rust_test(
+    name = "advent_2021_test",
+    crate = ":advent_2021",
 )
 
 BINARIES = [
