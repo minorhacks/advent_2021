@@ -23,6 +23,7 @@ rust_test(
 
 BINARIES = [
     "day_01",
+    "day_02",
 ]
 
 [
