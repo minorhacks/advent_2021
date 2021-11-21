@@ -3,14 +3,37 @@
 version = 3
 
 [[package]]
-name = "advent_2021"
+name = "advent_2018"
 version = "0.1.0"
 dependencies = [
- "rfnd-hello-world",
+ "anyhow",
+ "table-test",
 ]
 
 [[package]]
-name = "rfnd-hello-world"
-version = "1.0.1"
+name = "ansi_term"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3a3c0501ca84498b0327925c8eba1e18aed8d5c3a08afcbd825c9de01324bc9"
+checksum = "23ac7c30002a5accbf7e8987d0632fa6de155b7c3d39d0067317a391e00a2ef6"
+
+[[package]]
+name = "anyhow"
+version = "1.0.47"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38d9ff5d688f1c13395289f67db01d4826b46dd694e7580accdc3e8430f2d98e"
+
+[[package]]
+name = "difference"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "524cbf6897b527295dff137cec09ecf3a05f4fddffd7dfcd1585403449e74198"
+
+[[package]]
+name = "table-test"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f73c87f9a384717e5e0c5390ce69800c8b5538b55e866073607361021cd1e68"
+dependencies = [
+ "ansi_term",
+ "difference",
+]

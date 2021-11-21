@@ -6,27 +6,30 @@ load("@crates//:defs.bzl", "crate")
 # 2. Add dep for crate using `crate()` function
 
 rust_library(
-    name = "advent_2021",
+    name = "advent_2018",
     srcs = glob(["*.rs"]),
     deps = [
-        crate("rfnd-hello-world"),
+        crate("anyhow"),
     ],
 )
 
 rust_test(
-    name = "advent_2021_test",
-    crate = ":advent_2021",
+    name = "advent_2018_test",
+    crate = ":advent_2018",
+    deps = [
+        crate("table-test"),
+    ],
 )
 
 BINARIES = [
-    "hello_world",
+    "day_01",
 ]
 
 [
     rust_binary(
         name = b,
         srcs = ["bin/{}/main.rs".format(b)],
-        deps = [":advent_2021"],
+        deps = [":advent_2018"],
     )
     for b in BINARIES
 ]

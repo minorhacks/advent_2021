@@ -1,4 +1,4 @@
 # Enable clippy checks on rust builds by default
 # Use the `noclippy` tag to exclude targets
-build --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
-build --output_groups=+clippy_checks
+# build --aspects=@rules_rust//rust:defs.bzl%rust_clippy_aspect
+# build --output_groups=+clippy_checks
