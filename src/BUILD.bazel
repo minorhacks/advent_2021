@@ -29,6 +29,7 @@ BINARIES = [
     rust_binary(
         name = b,
         srcs = ["bin/{}/main.rs".format(b)],
+        data = ["bin/{}/input.txt".format(b)],
         deps = [":advent_2018"],
     )
     for b in BINARIES
