@@ -1,4 +1,4 @@
-workspace(name = "advent_2018")
+workspace(name = "advent_2021")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 

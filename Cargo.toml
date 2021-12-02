@@ -1,7 +1,7 @@
 [package]
 authors = ["Scott Minor <minor@minorhacks.com>"]
-edition = "2018"
-name = "advent_2018"
+edition = "2021"
+name = "advent_2021"
 version = "0.1.0"
 
 [dependencies]
@@ -9,6 +9,9 @@ anyhow = "1.0.47"
 
 [dev-dependencies]
 table-test = "0.2"
+
+[features]
+let_chains = []
 
 [package.metadata.raze]
 genmode = "Remote"
