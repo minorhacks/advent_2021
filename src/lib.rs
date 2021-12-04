@@ -1,5 +1,6 @@
 extern crate anyhow;
 
+pub mod bingo;
 pub mod diag;
 pub mod dive;
 pub mod sonar;
