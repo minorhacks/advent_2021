@@ -3,10 +3,10 @@ use anyhow::Context;
 use anyhow::Result;
 use std::collections::HashSet;
 use std::collections::VecDeque;
-use std::io;
 
 type NumList = VecDeque<i8>;
 
+#[derive(Clone)]
 pub struct Board {
     bingos: Vec<HashSet<i8>>,
 }
@@ -36,11 +36,8 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn load<T: io::BufRead>(mut r: T) -> Result<Game> {
-        let mut whole_ass_input = String::new();
-        r.read_to_string(&mut whole_ass_input)
-            .context("failed to read input")?;
-        let mut elems = whole_ass_input.split("\n\n");
+    pub fn load(s: &str) -> Result<Game> {
+        let mut elems = s.split("\n\n");
         let num_list = elems
             .next()
             .ok_or(anyhow!("failed to find number list"))?
@@ -71,7 +68,7 @@ impl Game {
         Ok(Game { num_list, boards })
     }
 
-    pub fn play(&mut self) -> Result<(i8, i32)> {
+    pub fn first_winning_board(&mut self) -> Result<(i8, i32)> {
         let mut current = 0;
         while !self.boards.iter().any(|b| b.has_bingo().is_some()) {
             current = self
@@ -88,17 +85,49 @@ impl Game {
             .ok_or(anyhow!("no winning boards"))?;
         Ok((current, winning_score))
     }
+
+    pub fn last_winning_board(&mut self) -> Result<(i8, i32)> {
+        let mut current = 0;
+        while self
+            .boards
+            .iter()
+            .filter(|b| b.has_bingo().is_none())
+            .count()
+            > 1
+        {
+            current = self
+                .num_list
+                .pop_front()
+                .ok_or(anyhow!("ran out of numbers"))?;
+            self.boards.iter_mut().for_each(|b| b.mark(current));
+        }
+        let mut last_board = self
+            .boards
+            .iter()
+            .find(|b| b.has_bingo().is_none())
+            .ok_or(anyhow!("no boards remaining"))?
+            .clone();
+        while last_board.has_bingo().is_none() {
+            current = self
+                .num_list
+                .pop_front()
+                .ok_or(anyhow!("ran out of numbers"))?;
+            last_board.mark(current);
+        }
+        let winning_score = last_board
+            .has_bingo()
+            .ok_or(anyhow!("last board still not winning"))?;
+        Ok((current, winning_score))
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testutil;
 
     #[test]
-    fn test_play_bingo() {
-        let input = testutil::string_reader(
-            r"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+    fn test_first_winning_board() {
+        let input = r"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
 22 13 17 11  0
  8  2 23  4 24
@@ -117,11 +146,38 @@ mod tests {
 18  8 23 26 20
 22 11 13  6  5
  2  0 12  3  7
-",
-        );
+";
         let mut game = Game::load(input).unwrap();
-        let (last_num, winning_board_score) = game.play().unwrap();
+        let (last_num, winning_board_score) = game.first_winning_board().unwrap();
         assert_eq!(24, last_num);
         assert_eq!(188, winning_board_score);
+    }
+
+    #[test]
+    fn test_last_winning_board() {
+        let input = r"7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19
+
+ 3 15  0  2 22
+ 9 18 13 17  5
+19  8  7 25 23
+20 11 10 24  4
+14 21 16 12  6
+
+14 21 17 24  4
+10 16 15  9 19
+18  8 23 26 20
+22 11 13  6  5
+ 2  0 12  3  7
+";
+        let mut game = Game::load(input).unwrap();
+        let (last_num, winning_board_score) = game.last_winning_board().unwrap();
+        assert_eq!(13, last_num);
+        assert_eq!(148, winning_board_score);
     }
 }
