@@ -47,7 +47,7 @@ impl std::str::FromStr for Point {
             .context(format!("failed to parse x coordinate as i32: {}", x))?;
         let y = y
             .parse::<i32>()
-            .context(format!("failed to parse x coordinate as i32: {}", y))?;
+            .context(format!("failed to parse y coordinate as i32: {}", y))?;
         Ok(Point { x, y })
     }
 }
