@@ -1,4 +1,5 @@
 extern crate anyhow;
+extern crate rayon;
 
 pub mod bingo;
 pub mod diag;

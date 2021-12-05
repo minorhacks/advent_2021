@@ -1,6 +1,7 @@
 use anyhow::anyhow;
 use anyhow::Context;
 use anyhow::Result;
+use rayon::prelude::*;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 
@@ -75,14 +76,15 @@ impl Game {
                 .num_list
                 .pop_front()
                 .ok_or(anyhow!("ran out of numbers"))?;
-            self.boards.iter_mut().for_each(|b| b.mark(current));
+            self.boards.par_iter_mut().for_each(|b| b.mark(current));
         }
         let winning_score = self
             .boards
-            .iter()
-            .filter_map(|b| b.has_bingo())
-            .next()
-            .ok_or(anyhow!("no winning boards"))?;
+            .par_iter()
+            .find_first(|b| b.has_bingo().is_some())
+            .ok_or(anyhow!("no winning boards"))?
+            .has_bingo()
+            .unwrap();
         Ok((current, winning_score))
     }
 
@@ -90,7 +92,7 @@ impl Game {
         let mut current = 0;
         while self
             .boards
-            .iter()
+            .par_iter()
             .filter(|b| b.has_bingo().is_none())
             .count()
             > 1
@@ -99,12 +101,12 @@ impl Game {
                 .num_list
                 .pop_front()
                 .ok_or(anyhow!("ran out of numbers"))?;
-            self.boards.iter_mut().for_each(|b| b.mark(current));
+            self.boards.par_iter_mut().for_each(|b| b.mark(current));
         }
         let mut last_board = self
             .boards
-            .iter()
-            .find(|b| b.has_bingo().is_none())
+            .par_iter()
+            .find_any(|b| b.has_bingo().is_none())
             .ok_or(anyhow!("no boards remaining"))?
             .clone();
         while last_board.has_bingo().is_none() {

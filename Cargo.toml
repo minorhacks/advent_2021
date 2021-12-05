@@ -6,6 +6,7 @@ version = "0.1.0"
 
 [dependencies]
 anyhow = "1.0.47"
+rayon = "1.5.1"
 
 [dev-dependencies]
 table-test = "0.2"
