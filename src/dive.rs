@@ -61,6 +61,12 @@ impl Position {
     }
 }
 
+impl Default for Position {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub struct AimPosition {
     horizontal: i32,
     depth: i32,
@@ -89,6 +95,12 @@ impl AimPosition {
 
     pub fn checksum(&self) -> i32 {
         self.horizontal * self.depth
+    }
+}
+
+impl Default for AimPosition {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
