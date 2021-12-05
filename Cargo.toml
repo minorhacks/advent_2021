@@ -11,9 +11,6 @@ rayon = "1.5.1"
 [dev-dependencies]
 table-test = "0.2"
 
-[features]
-let_chains = []
-
 [package.metadata.raze]
 genmode = "Remote"
 package_aliases_dir = "third_party/cargo"
