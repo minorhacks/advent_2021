@@ -18,7 +18,10 @@ http_archive(
 
 load("@rules_rust//rust:repositories.bzl", "rust_repositories")
 
-rust_repositories()
+rust_repositories(
+    edition = "2021",
+    version = "1.57.0",
+)
 
 ################################################################################
 # Cargo crates
