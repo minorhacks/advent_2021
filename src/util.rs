@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::io;
+use std::io::Read;
 use std::path;
 
 pub fn open(filename: &str) -> std::io::Result<io::BufReader<fs::File>> {
@@ -19,4 +20,11 @@ pub fn runfile(p: &str) -> path::PathBuf {
         Ok(runfiles_path) => path::PathBuf::from(runfiles_path).join(p),
         Err(_) => path::PathBuf::from(p),
     }
+}
+
+pub fn read_runfile_to_string(filename: &str) -> std::io::Result<String> {
+    let mut s = String::new();
+    let mut f = open(filename)?;
+    f.read_to_string(&mut s)?;
+    Ok(s)
 }
