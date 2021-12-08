@@ -29,20 +29,11 @@ impl std::str::FromStr for Entry {
             .split_whitespace()
             .map(|s| s.chars().collect::<HashSet<_>>())
             .collect::<Vec<_>>();
-        if signal_patterns.len() != 10 {
-            return Err(anyhow!(
-                "signal_patterns got {} elements; want 10",
-                signal_patterns.len()
-            ));
-        }
         let output = second
             .trim_matches(char::is_whitespace)
             .split_whitespace()
             .map(|s| s.chars().collect::<HashSet<_>>())
             .collect::<Vec<_>>();
-        if output.len() != 4 {
-            return Err(anyhow!("output got {} elements; want 4", output.len()));
-        }
         let signal_patterns = signal_patterns.try_into().map_err(|v: Vec<Digit>| {
             anyhow!("signal_patterns got {} elements; want 10", v.len())
         })?;
