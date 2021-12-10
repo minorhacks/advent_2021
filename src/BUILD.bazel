@@ -9,7 +9,9 @@ rust_library(
     name = "advent_2021",
     srcs = glob(["*.rs"]),
     deps = [
+        crate("array2d"),
         crate("anyhow"),
+        crate("itertools"),
         crate("rayon"),
     ],
 )
@@ -31,6 +33,7 @@ BINARIES = [
     "day_06",
     "day_07",
     "day_08",
+    "day_09",
 ]
 
 [
