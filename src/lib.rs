@@ -10,5 +10,6 @@ pub mod lanternfish;
 pub mod lava_tube;
 pub mod seven_segment;
 pub mod sonar;
+pub mod syntax;
 pub mod testutil;
 pub mod util;
