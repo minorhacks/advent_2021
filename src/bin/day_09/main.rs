@@ -5,5 +5,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let height_map = input.parse::<advent_2021::lava_tube::HeightMap>()?;
     println!("Part 1: {}", height_map.risk_level_sum());
 
+    println!("Part 1: {}", height_map.largest_basins_product(3));
     Ok(())
 }
