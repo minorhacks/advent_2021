@@ -2,6 +2,7 @@ extern crate anyhow;
 extern crate rayon;
 
 pub mod bingo;
+pub mod cave;
 pub mod crab;
 pub mod diag;
 pub mod dive;
