@@ -10,6 +10,7 @@ pub mod hydrothermal;
 pub mod lanternfish;
 pub mod lava_tube;
 pub mod octopus;
+pub mod origami;
 pub mod seven_segment;
 pub mod sonar;
 pub mod syntax;
