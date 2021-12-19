@@ -2,11 +2,15 @@ use std::collections::HashMap;
 
 use anyhow::anyhow;
 use anyhow::Result;
-use itertools::Itertools;
+
+type Pair = (char, char);
 
 #[derive(Clone)]
-pub struct Template(String);
-pub struct Rules(HashMap<(char, char), String>);
+pub struct Template {
+    pair_counts: HashMap<Pair, i64>,
+    first_char: char,
+}
+pub struct Rules(HashMap<Pair, char>);
 
 pub fn template_and_rules(s: &str) -> Result<(Template, Rules)> {
     let (template, rules) = s
@@ -19,36 +23,45 @@ impl std::str::FromStr for Template {
     type Err = anyhow::Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self(s.to_string()))
+        let pair_counts = s
+            .chars()
+            .zip(s.chars().skip(1))
+            .fold(HashMap::new(), |mut acc, pair| {
+                *acc.entry(pair).or_insert(0) += 1;
+                acc
+            });
+        let first_char = s
+            .chars()
+            .next()
+            .ok_or_else(|| anyhow!("failed to get first char of: {}", s))?;
+        Ok(Template {
+            pair_counts,
+            first_char,
+        })
     }
 }
 
 impl Template {
     pub fn step(&self, rules: &Rules) -> Result<Self> {
-        let template = self
-            .0
-            .chars()
-            .zip(self.0.chars().skip(1))
-            .map(|k| {
-                rules
-                    .0
-                    .get(&k)
-                    .ok_or_else(|| anyhow!("rule for '{:?}' not found", k))
-            })
-            .collect::<Result<Vec<_>>>()?
+        let pair_counts = self
+            .pair_counts
             .iter()
-            .fold(
-                self.0
-                    .chars()
-                    .nth(0)
-                    .expect("empty self.0 in step()")
-                    .to_string(),
-                |mut acc, &k| {
-                    acc += k;
-                    acc
-                },
-            );
-        Ok(Template(template))
+            .flat_map(|(k, v)| {
+                let insert_char = *rules
+                    .0
+                    .get(k)
+                    .unwrap_or_else(|| panic!("failed to find rule for: {:?}", k));
+                std::iter::once(((k.0, insert_char), v))
+                    .chain(std::iter::once(((insert_char, k.1), v)))
+            })
+            .fold(HashMap::new(), |mut acc, (k, v)| {
+                *acc.entry(k).or_insert(0) += v;
+                acc
+            });
+        Ok(Self {
+            pair_counts,
+            first_char: self.first_char,
+        })
     }
 
     pub fn step_n(&self, rules: &Rules, n: usize) -> Result<Self> {
@@ -59,11 +72,15 @@ impl Template {
         Ok(tmpl)
     }
 
-    pub fn score(&self) -> i32 {
-        let char_counts = self.0.chars().fold(HashMap::new(), |mut acc, c| {
-            *acc.entry(c).or_insert(0) += 1;
-            acc
-        });
+    pub fn score(&self) -> i64 {
+        let mut char_counts =
+            self.pair_counts
+                .iter()
+                .fold(HashMap::new(), |mut acc, (pair, count)| {
+                    *acc.entry(pair.1).or_insert(0) += count;
+                    acc
+                });
+        *char_counts.entry(self.first_char).or_insert(0) += 1;
         let lowest_count = char_counts
             .iter()
             .min_by_key(|k| k.1)
@@ -89,11 +106,11 @@ impl std::str::FromStr for Rules {
                     .split_once(" -> ")
                     .ok_or_else(|| anyhow!("failed to split on ' -> ': {}", s))?;
                 Ok((
-                    (start.chars().nth(0).unwrap(), start.chars().nth(1).unwrap()),
+                    (start.chars().next().unwrap(), start.chars().nth(1).unwrap()),
                     insert
                         .chars()
-                        .interleave(start.chars().skip(1))
-                        .collect::<String>(),
+                        .next()
+                        .ok_or_else(|| anyhow!("can't get first char of 'insert'"))?,
                 ))
             })
             .collect::<Result<HashMap<_, _>>>()?;
@@ -128,18 +145,7 @@ CN -> C";
     #[test]
     fn test_step() {
         let (template, rules) = template_and_rules(INPUT).unwrap();
-        let template = template.step(&rules).unwrap();
-        assert_eq!("NCNBCHB", template.0);
-        let template = template.step(&rules).unwrap();
-        assert_eq!("NBCCNBBBCBHCB", template.0);
-        let template = template.step(&rules).unwrap();
-        assert_eq!("NBBBCNCCNBBNBNBBCHBHHBCHB", template.0);
-        let template = template.step(&rules).unwrap();
-        assert_eq!(
-            "NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB",
-            template.0
-        );
-        let template = template.step_n(&rules, 6).unwrap();
+        let template = template.step_n(&rules, 10).unwrap();
         assert_eq!(1588, template.score())
     }
 }
