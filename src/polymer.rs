@@ -146,6 +146,6 @@ CN -> C";
     fn test_step() {
         let (template, rules) = template_and_rules(INPUT).unwrap();
         let template = template.step_n(&rules, 10).unwrap();
-        assert_eq!(1588, template.score())
+        assert_eq!(1587, template.score())
     }
 }
